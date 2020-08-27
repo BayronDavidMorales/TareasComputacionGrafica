@@ -1,0 +1,170 @@
+<html>
+	<head>
+		<title>My first three.js app</title>
+		<script src="js/three.js"></script>
+		<script import { OrbitControls } from "/JSM/controls/OrbitControls.js"></script>
+		<style>
+			body { margin: 0; }
+			canvas { display: block; }
+		</style>
+	</head>
+	<body>
+
+		<script>
+
+			//plantilla tomada de la documentacion oficial de three.js ->
+			//https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene
+			alert("APOYADO EN --> Camaras brazorobot(Ruben Contreras)-TOMADO DE'http://www.avilagab.com/umng/CGCAJ20201/u6000312/'");
+
+		</script>
+		<script>var diibujarEsfera = function (radio, posicionx, posiciony, posicionz, completa, rotacionY, color) {
+			var completaInt;
+			if (completa==true) {
+				completaInt=2;
+			}else {
+				completaInt=1.00;
+			}
+			//basado en el algoritmo de construccion de esfera tomado de http://esferaopengl.blogspot.com
+			var geoEsfera = new THREE.Geometry();
+			var increRadE= Math.PI/25;
+			var resES=2;
+
+				        for( var i = 0; i <  Math.PI; i+=increRadE){
+			                for( var j = 0; j < completaInt*Math.PI; j+=increRadE){
+			                    var punto2 = new THREE.Vector3();
+
+													punto2.z = radio* Math.cos(j) * Math.sin(i) ;
+			                    punto2.y = radio * Math.cos(i) ;
+			                    punto2.x = radio * Math.sin(j) * Math.sin(i) ;
+			                    geoEsfera.vertices.push( punto2 );
+			                }
+			            }
+					var matEsf = new THREE.PointsMaterial( { color: color, size: 0.01 } );
+					esfera = new THREE.Points(geoEsfera, matEsf);
+					scene.add(esfera);
+
+					esfera.translateX(posicionx);
+					esfera.translateY(posiciony);
+					esfera.translateZ(posicionz);
+					//esfera.rotation.x += (rotacionY);
+					esfera.rotation.y += (rotacionY);
+					esfera.rotation.z += (rotacionY);
+					return esfera;
+	 }
+
+		</script>
+
+		<script>
+		var dibujarCilindros= function (radio, largo, posicionx, posiciony, posicionz, rotacionx, rotaciony) {
+
+	  var geoCilindro = new THREE.Geometry();
+
+			var increRadC= Math.PI/45;
+			var resCi=5;
+			for( var i = 0; i < 2*Math.PI; i+=increRadC){
+			for ( var j=0; j < largo*resCi; j++){
+			 var punto3 = new THREE.Vector3();
+										 punto3.z = (radio*Math.sin(i)) ;
+										 punto3.y = (radio*j/resCi);
+										 punto3.x = (radio* Math.cos(i)) ;
+										 geoCilindro.vertices.push( punto3 );
+			}
+			}
+
+			var matCil = new THREE.PointsMaterial( { color: 'red', size: 0.01 } );
+
+			cilindro = new THREE.Points(geoCilindro, matCil);
+			cilindro.translateX(posicionx);
+			cilindro.translateY(posiciony);
+			cilindro.translateZ(posicionz);
+
+			cilindro.rotation.x += (rotacionx);
+			cilindro.rotation.z += (rotaciony);
+			esferaObj.add(cilindro);
+ }
+		</script>
+		<script>
+		function dibujarRectangulo(resCub, posicionx, posiciony, posicionz) {
+
+
+		geoRec = new THREE.Geometry();
+
+				for( var i = 0; i < resCub; i++){
+							for( var j = 0; j < resCub; j++){
+					for( var k = 0; k < resCub; k++){
+										 var punto1 = new THREE.Vector3();
+										 punto1.x =  (i/5);
+										 punto1.y = (j/5);
+										 punto1.z = k/5;
+
+											geoRec.vertices.push( punto1 );
+						}
+					}
+				}
+
+				var matRec = new THREE.PointsMaterial( { color: 0x2b2e2f, size: 0.00001 } );
+				rectangulo = new THREE.Points(geoRec, matRec);
+				rectangulo.translateX(posicionx);
+				rectangulo.translateY(posiciony);
+				rectangulo.translateZ(posicionz);
+				esferaObj.add(rectangulo);}
+		</script>
+
+		<script>
+
+			var scene    = new THREE.Scene();
+			var camera   = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 0.1, 1000 );
+			var renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+
+		 ejes = new THREE.AxesHelper( 20 );
+		 //scene.add( ejes );
+
+		 var esferaObj= diibujarEsfera(1,   0, 0,    0,		true,0, 'red'); //cuerpo
+		 esferaObj.add(diibujarEsfera(0.45, 0, 1.45, 0,		true,0, 'red'));//cabeza
+		 esferaObj.add(diibujarEsfera(0.04, 0, 1.4,  0.45,true,0, 'red'));//nariz
+
+		 esferaObj.add(diibujarEsfera(0.8, 	0, -0.8,  0,	false, -1.499, 0xff0026));//cadera
+
+		 esferaObj.add(diibujarEsfera(0.4, 	0.3, -1.35,  -0.2,	true, 0, 0xffA030));//NalgaIzq
+				dibujarCilindros(0.3, 5,  0.3, -1.5, -0.2, 9.45, 0);//piernaIzq}
+					esferaObj.add(diibujarEsfera(0.28, 0.3, -3,   -0.2,	true,0, 0xffA030));//rodillaIzq
+						dibujarCilindros(0.21, 5,  0.3, -3.2, -0.2, 9.45, 0);//piernaIzq+
+
+		 esferaObj.add(diibujarEsfera(0.4, 	-0.3, -1.35, -0.2,	true, 0, 0xffA030));//NalgaDer
+		 	dibujarCilindros(0.3, 5, -0.3, -1.5, -0.2, 9.45, 0);//piernaDer
+					esferaObj.add(diibujarEsfera(0.28, -0.3, -3,   -0.2,	true,0, 0xffA030));//rodillDer
+						dibujarCilindros(0.21, 5, -0.3, -3.2, -0.2, 9.45, 0);//piernaDer+
+
+		 esferaObj.add(diibujarEsfera(0.3,  0.6, 0.7,   0,	true, 0 , 0xffA030)); //hombroIzq
+		 		dibujarCilindros(0.25, 4,  0.6, 0.7, -0.0, 0, -1.5); //barzoIzq
+					esferaObj.add(diibujarEsfera(0.25,  1.6, 0.75,   0,	true,0, 0xffA030)); //codoIzq
+							dibujarCilindros(0.15, 5,  1.8, 0.75, 0, 0 , -1.5); //barzoIzq+
+
+		 esferaObj.add(diibujarEsfera(0.3, -0.6, 0.7,   0,	true,0 , 0xffA030));//hombroDer
+				dibujarCilindros(0.25, 4, -0.6, 0.7, -0.0, 0, 1.5); //brazoDer
+		 				esferaObj.add(diibujarEsfera(0.25, -1.6, 0.75,   0,	true,0, 0xffA030));//codoDer
+								dibujarCilindros(0.15, 5, -1.8, 0.75, 0, 0, 1.5); //brazoDer+
+
+				for (var i = -10; i <10;  i++) {
+					for (var j = -10; j < 10; j++) {
+									dibujarRectangulo(10, i, -6, j);
+								}
+					}
+
+			camera.position.z = 5;
+
+			var animate = function () {
+				requestAnimationFrame( animate );
+
+				esferaObj.rotation.y += 0.001;
+				esferaObj.rotation.z += 0.00001;
+
+				renderer.render( scene, camera );
+			};
+
+			animate();
+		</script>
+	</body>
+</html>
