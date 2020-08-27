@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>PERSONAJE</title>
+        <title>Mr Points</title>
         <style>
             html, body { margin: 0; padding: 0; overflow: hidden; }
             #info {
@@ -232,9 +232,9 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 			objPiernaIzqPlus = dibujarCilindros(0.21, 5, 0., 1.1, -0, 9.45, 0, 'piernaIzqPlus', objCuerpo);//piernaDer+
 
 			objNalgaDer = diibujarEsfera(0.5, -0.3, -1.35, -0.2, true, 0, 0xffA030, 'nalgaDer', objCadera);
-			objPiernaDer = dibujarCilindros(0.3, 5, -0.3, -1.5, -0.2, 9.45, 0, 'piernaDer', objCuerpo);
-			objRodillaDer = diibujarEsfera(0.28, -0.3, -3, -0.2, true, 0, 0xffA030, 'rodillaDer', objCadera);
-			objPiernaDerPlus = dibujarCilindros(0.21, 5, -0.3, -3.2, -0.2, 9.45, 0, 'piernaDerPlus', objCuerpo);
+			objPiernaDer = dibujarCilindros(0.3, 5, -0.05, -0.4, -0, 9.45, 0, 'piernaDer', objCuerpo);
+			objRodillaDer = diibujarEsfera(0.28, -0, 1.4, -0, true, 0, 0xffA030, 'rodillaDer', objCadera);
+			objPiernaDerPlus = dibujarCilindros(0.21, 5, -0, 1.1, -0, 9.45, 0, 'piernaDerPlus', objCuerpo);
 			
 
 			objHombroIzq = diibujarEsfera(0.3, 0.6, 0.7, 0, true, 0, 0xffA030, 'hombroIzq', objCuerpo);
@@ -269,7 +269,7 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 			brazoIzqGroup.add ( objBrazoIzq, objCodoIzq, objBrazoIzqPlus);
 			brazoDerGroup.add ( objBrazoDer, objCodoDer, objBrazoDerPlus);
 
-			torsoGroup.add(objCadera, objCuerpo);
+			torsoGroup.add (objCadera, objCuerpo);
 			cabezaGroup.add (objCabeza, objNariz);
 
             piernaDerGroup.applyMatrix(new THREE.Matrix4().makeTranslation(0.3, 1.3, 0.2));
@@ -290,7 +290,10 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 			objPiernaIzq.add(objRodillaIzq);
 			objRodillaIzq.add(objPiernaIzqPlus);
 
-			objNalgaDer.add(piernaDerGroup);
+			objNalgaDer.add(objPiernaDer);
+			objPiernaDer.add(objRodillaDer);
+			objRodillaDer.add(objPiernaDerPlus);
+
 			objHombroIzq.add(brazoIzqGroup);
 			objHombroDer.add(brazoDerGroup);
 
@@ -340,7 +343,7 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 		if(thetaSum<=-100*Math.PI/300)
 			positivo = true;
 
-		if (thetaSumDos >= 100 * Math.PI / 300) {
+		if (thetaSumDos >= 0) {
 			positivoPrueba = false;
 
 		}
@@ -387,10 +390,10 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 				//thetaPrueba=-0.5;
 			}
 			if (positivoPrueba) {
-				thetaPrueba = -.05;
+				thetaPrueba = .05;
 				//sigmaPrueba = .05;
 			} else {
-				thetaPrueba = 0.05;
+				thetaPrueba = -0.05;
 				//sigmaPrueba = -0.05;
 			}	
 		}
@@ -417,14 +420,14 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 		//ROTACIONES
 		var ct1 = Math.cos(theta);
 		var ct2 = Math.cos(-theta);
-		var ctp = Math.cos(1.5*thetaPrueba);
+		var ctp = Math.cos(thetaPrueba);
 		
 		var cs = Math.cos(sigma);
 		var csp= Math.cos(-sigmaPrueba);
 
 		var st1 = Math.sin(theta);
 		var st2 = Math.sin(-theta);
-		var stp = Math.sin(1.5*thetaPrueba);
+		var stp = Math.sin(-thetaPrueba);
 		
 		var ss  = Math.sin(sigma);
 		var ssp = Math.cos(sigmaPrueba);
@@ -452,10 +455,10 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 					0,  0,  0, 1 );
 		
 		
-		rp.set		(ctp, -stp,  	0,	 0,
-					stp,   ctp,	 	0,	 0,
-					0, 		 0,		 1,	 0,
-					0, 		 0, 	 0,  1);
+		rp.set(1, 0, 0, 0,
+			0, ctp, -stp, 0,
+			0, stp, ctp, 0,
+			0, 0, 0, 1);
 
 		//ROTACION EN UN EJE PARALELO
 		var tempMatrix = new THREE.Matrix4();
@@ -465,8 +468,13 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 		torsoGroup.applyMatrix( tempMatrix );
 		
 		objPiernaIzq.applyMatrix(rx);
-		// objPiernaIzqPlus.applyMatrix(rp);
-		piernaDerGroup.applyMatrix(rz);
+		objPiernaDer.applyMatrix(rz);
+		objPiernaIzqPlus.applyMatrix(rp);
+		objPiernaDerPlus.applyMatrix(rp);
+		
+		objBrazoDerPlus.applyMatrix(rp);
+		objBrazoIzqPlus.applyMatrix(rp);
+
 		brazoIzqGroup.applyMatrix(rz);
 		brazoDerGroup.applyMatrix(rx);
 
