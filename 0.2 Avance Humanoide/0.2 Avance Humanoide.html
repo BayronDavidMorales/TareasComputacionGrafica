@@ -122,18 +122,20 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 		var leftFoot, leftLeg, leftArm, leftHand;
 		var startTime = Date.now();
 		var controls;
-		var upArrow = false;
-		var downArrow = false;
+		// var upArrow = false;
+		// var downArrow = false;
 		var leftArrow = false;
 		var rightArrow = false;
-		var xAxis = true;
-		var yAxis = false;
-		var zAxis = false;
-
+		var cameraPositionX, cameraPositionY, cameraPositionZ;
 		var thetaSum=0;
 		var thetaSumDos=0;
+		var banderasObj ={ upArrow:false, downArrow:false}
 		var positivo=false;
 		var positivoPrueba=false;
+		var siSioSiNo;
+		let brazoDerGroupReset, brazoIzqGroupReset;
+		var temp = 0;
+		
 
 		init();
 		animate();
@@ -146,8 +148,6 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 			renderer.setSize( window.innerWidth, window.innerHeight );
 			document.body.appendChild( renderer.domElement );
 			controls = new THREE.OrbitControls(camera, renderer.domElement);
-			// invalidation.then(() => (controls.dispose(), renderer.dispose()));
-			//controls = new THREE.OrbitControls(camera, renderer.domElement);
 
 			//EVENTOS DE TECLADO
 			//w=87, s=83, A=65, d=68
@@ -155,10 +155,10 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 			var onKeyDown = function ( event ) {
 				switch ( event.keyCode ) {
 					case 87: // TRASLADAR ADELANTE
-						upArrow = true;
+						banderasObj.upArrow = true;
 						break;
 					case 83: // TRASLADAR ATRÁS
-						downArrow = true;
+						banderasObj.downArrow = true;
 						break;
 					case 65: // ROTAR CW
 						leftArrow = true;
@@ -172,10 +172,10 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 			var onKeyUp = function ( event ) {
 				switch ( event.keyCode ) {
 					case 87: // TRASLADAR
-						upArrow = false;
+						banderasObj.upArrow = false;
 						break;
 					case 83: // TRASLADAR
-						downArrow = false;
+						banderasObj.downArrow = false;
 						break;
 					case 65: // ROTAR CW
 						leftArrow = false;
@@ -277,7 +277,10 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 
 			brazoDerGroup.applyMatrix(new THREE.Matrix4().makeTranslation(0.5, -.8, 0));
 			brazoIzqGroup.applyMatrix(new THREE.Matrix4().makeTranslation(-0.5, -.8, 0));
-			
+
+			brazoDerGroupReset=brazoDerGroup;
+			brazoIzqGroupReset=brazoIzqGroup;
+
 			scene.add( torsoGroup );
 			torsoGroup.add(ejesGroup)
 			torsoGroup.add(cabezaGroup);
@@ -297,25 +300,133 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 			objHombroIzq.add(brazoIzqGroup);
 			objHombroDer.add(brazoDerGroup);
 
-			//MOVER LA CAMARA
-			camera.position.x = 10;
-			camera.position.y = 3;
-		  	camera.position.z = 10;
-		  	camera.lookAt( origin );
-
-			// GUIS
-			var datGui = new dat.GUI();
-
-			datGui.id = 'gui';
-
-		    transalacionGuiFolder = datGui.addFolder('Transaladar Cuerpo');
-		// transalacionGuiFolder.add(rotationAngles, "theta3", -90, 90, 1).onChange(rotation).name('z');
 			
-			camaraGuiFolder = datGui.addFolder('Rotar Camara');
-			zoomGuiFolder = datGui.addFolder('Zoom');
-			rotPiernasGuiFolder = datGui.addFolder('Rotar Piernas');
-			rotBrazosGuiFolder = datGui.addFolder('Rotar Brazos');
-			RotCabezaGuiFolder = datGui.addFolder('Rotar Cabeza');
+				siSioSiNo=0;
+
+			objDatGuiOptios={
+				anguloCamara: 0,
+				anguloDeRotacion:0,
+				activarMovimiento:true,
+
+				activarMovimientofUN: function(){
+					if (objDatGuiOptios.activarMovimiento==true) {
+						siSioSiNo=0;
+						console.log('true');
+					}
+					if (objDatGuiOptios.activarMovimiento == false) {
+						siSioSiNo = 3;
+						console.log('flase');
+					}
+					
+				},
+				
+				rotcamaraFun: function() {
+				camera.position.x = Math.cos(objDatGuiOptios.anguloCamara)*20;
+				camera.position.z = Math.sin(objDatGuiOptios.anguloCamara)*20;
+				camera.position.y = 2;
+				cameraPositionX   = camera.position.x;
+				cameraPositionY   = camera.position.y;
+				cameraPositionZ   = camera.position.z;
+				return  { cameraPositionX, cameraPositionY, cameraPositionZ }
+				},
+
+			 	zoomFun: function() {
+			 	camera.position.z = 51- objDatGuiOptios.anguloCamara;
+				 camera.position.y=0;
+				 camera.position.x=0
+			 	},
+
+				 posicionesFunHuir: function(){
+					
+					 brazoDerGroup.applyMatrix(new THREE.Matrix4().makeRotationX(THREE.Math.degToRad(90)));
+					 brazoIzqGroup.applyMatrix(new THREE.Matrix4().makeRotationX(THREE.Math.degToRad(90)));
+					 siSioSiNo = 1;					
+				 },
+				 posicionesFunCruz: function () {
+
+					brazoDerGroup.applyMatrix(new THREE.Matrix4().makeRotationX(THREE.Math.degToRad(-90)));
+					brazoIzqGroup.applyMatrix(new THREE.Matrix4().makeRotationX(THREE.Math.degToRad(-90)));
+					brazoDerGroup.applyMatrix(new THREE.Matrix4().makeRotationY(THREE.Math.degToRad(-60)));
+					brazoIzqGroup.applyMatrix(new THREE.Matrix4().makeRotationY(THREE.Math.degToRad(60)));
+					siSioSiNo = 1;
+				},
+				rotarBrazosFunX: function () {
+
+					brazoDerGroup.applyMatrix(new THREE.Matrix4().makeRotationX(THREE.Math.degToRad(objDatGuiOptios.anguloDeRotacion-temp)));
+					brazoIzqGroup.applyMatrix(new THREE.Matrix4().makeRotationX(THREE.Math.degToRad(objDatGuiOptios.anguloDeRotacion - temp)));
+					temp= objDatGuiOptios.anguloDeRotacion;
+				},
+				rotarBrazosFunZ: function () { // rota en Y pero parece Z
+
+					brazoDerGroup.applyMatrix(new THREE.Matrix4().makeRotationY(THREE.Math.degToRad(objDatGuiOptios.anguloDeRotacion - temp)));
+					brazoIzqGroup.applyMatrix(new THREE.Matrix4().makeRotationY(THREE.Math.degToRad(objDatGuiOptios.anguloDeRotacion - temp)));
+					temp = objDatGuiOptios.anguloDeRotacion;
+				},
+				rotarBrazosFunY: function () { // rota en Z pero parece Y
+
+					brazoDerGroup.applyMatrix(new THREE.Matrix4().makeRotationZ(THREE.Math.degToRad(objDatGuiOptios.anguloDeRotacion - temp)));
+					brazoIzqGroup.applyMatrix(new THREE.Matrix4().makeRotationZ(THREE.Math.degToRad(objDatGuiOptios.anguloDeRotacion - temp)));
+					temp = objDatGuiOptios.anguloDeRotacion;
+				},
+				rotarPiernasFunX: function () {
+					objPiernaIzq.applyMatrix(new THREE.Matrix4().makeRotationX(THREE.Math.degToRad(objDatGuiOptios.anguloDeRotacion - temp)));
+					objPiernaDer.applyMatrix(new THREE.Matrix4().makeRotationX(THREE.Math.degToRad((objDatGuiOptios.anguloDeRotacion - temp)*-1)));
+					temp = objDatGuiOptios.anguloDeRotacion;
+				},
+				rotarPiernasFunZ: function () {
+					objPiernaIzq.applyMatrix(new THREE.Matrix4().makeRotationZ(THREE.Math.degToRad((objDatGuiOptios.anguloDeRotacion - temp)*-1)));
+					objPiernaDer.applyMatrix(new THREE.Matrix4().makeRotationZ(THREE.Math.degToRad((objDatGuiOptios.anguloDeRotacion - temp))));
+					temp = objDatGuiOptios.anguloDeRotacion;
+				},
+				rotarPantorrillasFun: function () {
+					objPiernaIzqPlus.applyMatrix(new THREE.Matrix4().makeRotationX(THREE.Math.degToRad((objDatGuiOptios.anguloDeRotacion - temp) * -1)));
+					objPiernaDerPlus.applyMatrix(new THREE.Matrix4().makeRotationX(THREE.Math.degToRad((objDatGuiOptios.anguloDeRotacion - temp) * -1)));
+					temp = objDatGuiOptios.anguloDeRotacion;
+				},
+				
+
+				 resetear: function(){
+					 brazoDerGroup=brazoDerGroupReset;
+					 brazoIzqGroup=brazoIzqGroupReset;
+					 siSioSiNo=0;
+				 }	
+			}
+
+			var datGuiCamaras= new dat.GUI();
+
+				datGuiCamaras.add(objDatGuiOptios, 'anguloCamara', -3, 3).onChange(objDatGuiOptios.rotcamaraFun).step(0.01).name('Rotar');
+				datGuiCamaras.add(objDatGuiOptios, 'anguloCamara', -50, 50).onChange(objDatGuiOptios.zoomFun).step(0.001).name('Zoom');
+
+			var datGuiRotar = new dat.GUI();
+				datGuiRotar.add(objDatGuiOptios, 'activarMovimiento').name('Movimiento').onChange(objDatGuiOptios.activarMovimientofUN);
+				rotBrazosGuiFolder = datGuiRotar.addFolder('Rotar Brazos');
+				rotBrazosGuiFolder.add(objDatGuiOptios, 'anguloDeRotacion', -120, 80).onChange(objDatGuiOptios.rotarBrazosFunX).step(0.0001).name('Rotar Brazos X');
+				rotBrazosGuiFolder.add(objDatGuiOptios, 'anguloDeRotacion',  -120, 120).onChange(objDatGuiOptios.rotarBrazosFunZ).step(0.0001).name('Rotar Brazos Z');
+				rotBrazosGuiFolder.add(objDatGuiOptios, 'anguloDeRotacion',  -120, 120).onChange(objDatGuiOptios.rotarBrazosFunY).step(0.0001).name('Rotar Brazos Y');
+				
+				rotPiernasGuiFolder  = datGuiRotar.addFolder('Rotar Piernas');
+				rotPiernasGuiFolder.add(objDatGuiOptios, 'anguloDeRotacion', -80, 80).onChange(objDatGuiOptios.rotarPiernasFunX).step(0.0001).name('Rotar Piernas X');
+				rotPiernasGuiFolder.add(objDatGuiOptios, 'anguloDeRotacion', -80, 0).onChange(objDatGuiOptios.rotarPiernasFunZ).step(0.0001).name('Rotar Piernas Z');
+				rotPiernasGuiFolder.add(objDatGuiOptios, 'anguloDeRotacion', -80, 0).onChange(objDatGuiOptios.rotarPantorrillasFun).step(0.0001).name('Pantorrilas');
+
+				datGuiRotar.add(objDatGuiOptios, 'posicionesFunHuir').name('Huir');
+				datGuiRotar.add(objDatGuiOptios, 'posicionesFunCruz').name('Cruz');
+			
+				datGuiRotar.add(objDatGuiOptios, 'resetear').name('Reset');
+
+			
+			camera.position.y = 2;
+			camera.position.z = 10;
+			camera.lookAt(torsoGroup);
+			
+			window.addEventListener('resize', redimencionar);
+
+			function redimencionar(){
+				camera.aspect=window.innerWidth/window.innerHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize(window.innerWidth, window.innerHeight);
+				renderer.render(scene, camera);
+			}
 
 			renderer.render(scene, camera);
 			
@@ -343,7 +454,7 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 		if(thetaSum<=-100*Math.PI/300)
 			positivo = true;
 
-		if (thetaSumDos >= 0) {
+		if (thetaSumDos >= 0.2) {
 			positivoPrueba = false;
 
 		}
@@ -355,7 +466,7 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 
 
 
-		if(upArrow) {
+		if(banderasObj.upArrow) {
 
 			varTrasnslacion.tx=0; varTrasnslacion.ty=0; varTrasnslacion.tz=0.1;
 			//tx=0; ty=0; tz=.1;
@@ -378,7 +489,7 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 			}	
 		}
 
-		if(downArrow) {
+		if(banderasObj.downArrow) {
 			varTrasnslacion.tx=0; varTrasnslacion.ty=0; varTrasnslacion.tz=-0.1;
 
 			if(positivo){
@@ -436,7 +547,7 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 		var rx = new THREE.Matrix4();
 		var rz = new THREE.Matrix4();
 		var rp=  new THREE.Matrix4();
-	
+		var rpBrazos = new THREE.Matrix4();
 
 
 		//MATRIZ DE ROTACIÓN EN EJE Y
@@ -455,30 +566,63 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 					0,  0,  0, 1 );
 		
 		
-		rp.set(1, 0, 0, 0,
-			0, ctp, -stp, 0,
-			0, stp, ctp, 0,
+		rp.set(		1, 0, 	0,	 	0,
+					0, ctp, -stp, 	0,
+					0, stp, ctp, 	0,
+					0, 0,	 0, 	1);
+
+		rpBrazos.set(csp, 0, ssp, 0,
+			0, 1, 0, 0,
+			-ssp, 0, csp, 0,
 			0, 0, 0, 1);
 
 		//ROTACION EN UN EJE PARALELO
 		var tempMatrix = new THREE.Matrix4();
-		tempMatrix.copyPosition( torsoGroup.matrix );
-		torsoGroup.applyMatrix( new THREE.Matrix4().getInverse(tempMatrix) );
-		torsoGroup.applyMatrix(ry);
-		torsoGroup.applyMatrix( tempMatrix );
-		
-		objPiernaIzq.applyMatrix(rx);
-		objPiernaDer.applyMatrix(rz);
-		objPiernaIzqPlus.applyMatrix(rp);
-		objPiernaDerPlus.applyMatrix(rp);
-		
-		objBrazoDerPlus.applyMatrix(rp);
-		objBrazoIzqPlus.applyMatrix(rp);
 
-		brazoIzqGroup.applyMatrix(rz);
-		brazoDerGroup.applyMatrix(rx);
+		
+			switch (siSioSiNo) {
+				case 1: // MUEVE  TOROSO Y ROTA PIERNAS NO ROTA BRAZOS 
+					tempMatrix.copyPosition(torsoGroup.matrix);
+					torsoGroup.applyMatrix(new THREE.Matrix4().getInverse(tempMatrix));
+					torsoGroup.applyMatrix(ry);
+					torsoGroup.applyMatrix(tempMatrix);
+					
+					objPiernaIzq.applyMatrix(rx);
+					objPiernaDer.applyMatrix(rz);
+					objPiernaIzqPlus.applyMatrix(rp);
+					objPiernaDerPlus.applyMatrix(rp);
+					break;
+				case 2: // ROTA SOLO BRAZOS
+					brazoIzqGroup.applyMatrix(rz);
+					brazoDerGroup.applyMatrix(rx);
+					break;
+				case 3: // NO HAY MOVIMIENTO
 
-        camera.lookAt( 0, 0, 0 );
+					break;
+			
+				default:	// MUEVE TODO EL CUERPO =0
+
+					tempMatrix.copyPosition(torsoGroup.matrix);
+					torsoGroup.applyMatrix(new THREE.Matrix4().getInverse(tempMatrix));
+					torsoGroup.applyMatrix(ry);
+					torsoGroup.applyMatrix(tempMatrix);
+					objPiernaIzq.applyMatrix(rx);
+					objPiernaDer.applyMatrix(rz);
+					objPiernaIzqPlus.applyMatrix(rp);
+					objPiernaDerPlus.applyMatrix(rp);
+					brazoIzqGroup.applyMatrix(rz);
+					brazoDerGroup.applyMatrix(rx);
+					break;
+			}
+		
+		
+
+		
+		// objBrazoDerPlus.applyMatrix(rp);
+		// objBrazoIzqPlus.applyMatrix(rp);
+
+
+        camera.lookAt(torsoGroup.position);
         renderer.render( scene, camera );
     }
     </script>
