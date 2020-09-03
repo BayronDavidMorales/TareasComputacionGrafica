@@ -15,18 +15,22 @@
     </head>
     <body>
         <div id="info">HUMANOIDE CON PUNTOS<br/>
-            W A S D  para transladar.<br/>
-            Usar mouse para mover camara.<br/>
-        </div>
+            		   W A S D  para transladar.<br/>
+            		   Usar mouse para mover camara.<br/>
+                   DAVID MORALES - DANIEL PEDROZA 
+		</div>
+		<!-- LIBRERIAS -->
 	<script src="js/three.min.js"></script>
 	<script src="js/controls/OrbitControls.js"></script>
 	<script src='js/libs/dat.gui.min.js'></script>
+  <script type="text/javascript">
 
-    <script>
+
     var diibujarEsfera = function (radio, posicionx, posiciony, posicionz, completa, rotacionY, color, nombre, funPadre) {
-  if (funPadre==null) {
-      funPadre=scene;
-  }
+
+  		if (funPadre==null) {
+      	funPadre=scene;
+ 		}
       var completaInt;
       var name= this.nombre;
       if (completa == true) {
@@ -49,13 +53,15 @@
               geoEsfera.vertices.push(punto2);
           }
       }
-      var matEsf = new THREE.PointsMaterial({ color: color, size: 0.01 });
+
+	  var matEsf = new THREE.PointsMaterial({ color: color, size: 0.01 });
       name = new THREE.Points(geoEsfera, matEsf);
       scene.add(name);
 
       name.translateX(posicionx);
       name.translateY(posiciony);
       name.translateZ(posicionz);
+
       name.rotation.x += (rotacionY);
       name.rotation.y += (rotacionY);
       name.rotation.z += (rotacionY);
@@ -114,7 +120,7 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
   }
 
 	</script>
-	
+
     <script>
 		var scene, aspect, camera, renderer;
 		var geometry1, geometry2;
@@ -122,8 +128,6 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 		var leftFoot, leftLeg, leftArm, leftHand;
 		var startTime = Date.now();
 		var controls;
-		// var upArrow = false;
-		// var downArrow = false;
 		var leftArrow = false;
 		var rightArrow = false;
 		var cameraPositionX, cameraPositionY, cameraPositionZ;
@@ -135,7 +139,7 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 		var siSioSiNo;
 		let brazoDerGroupReset, brazoIzqGroupReset;
 		var temp = 0;
-		
+
 
 		init();
 		animate();
@@ -191,21 +195,19 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 
 			//ELEMENTOS DE ESCENA
 
+			// EJES DE COORDENADAS
 			var size = 10;
 			var arrowSize = 1;
 			var divisions = size;
 			var origin = new THREE.Vector3( 0, 0, 0 );
-			
+
 			var x = new THREE.Vector3( 1, 0, 0 );
 			var y = new THREE.Vector3( 0, 1, 0 );
 		  	var z = new THREE.Vector3( 0, 0, 1 );
-	
+
 		  	var colorR = new THREE.Color( 0xAA0000 );
 		  	var colorG = new THREE.Color( 0x00AA00 );
 		  	var colorB = new THREE.Color( 0x0000AA );
-			
-			
-	
 
 
             //CREAR LAS FLECHAS QUE INDICAN LOS EJES DE COORDENADAS 3D
@@ -217,6 +219,7 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 			ejesGroup.add(arrowX, arrowY, arrowZ);
 
 			//CREAR LAS GEOMETRÍAS
+
 			// var diibujarEsfera = function (radio, posicionx, posiciony, posicionz, completa, rotacionY, color, nombre, funPadre)
 			// var dibujarCilindros = function (radio, largo, posicionx, posiciony, posicionz, rotacionx, rotaciony, nombre, funPadre)
 
@@ -235,7 +238,7 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 			objPiernaDer = dibujarCilindros(0.3, 5, -0.05, -0.4, -0, 9.45, 0, 'piernaDer', objCuerpo);
 			objRodillaDer = diibujarEsfera(0.28, -0, 1.4, -0, true, 0, 0xffA030, 'rodillaDer', objCadera);
 			objPiernaDerPlus = dibujarCilindros(0.21, 5, -0, 1.1, -0, 9.45, 0, 'piernaDerPlus', objCuerpo);
-			
+
 
 			objHombroIzq = diibujarEsfera(0.3, 0.6, 0.7, 0, true, 0, 0xffA030, 'hombroIzq', objCuerpo);
 			objBrazoIzq = dibujarCilindros(0.25, 4, 0.6, 0.7, -0.0, 0, -2.5, 'brazoIzq', objCuerpo);
@@ -254,6 +257,8 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
                     dibujarRectangulo(10, i, -5, j);
                 }
             }
+
+			// SE AGRUPAN LAS GEOMETRIAS PARA FORMAR PARTES DEL CUERPO
 
 			cuerpoEntero   = new THREE.Group();
 			piernaIzqGroup = new THREE.Group();
@@ -278,8 +283,10 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 			brazoDerGroup.applyMatrix(new THREE.Matrix4().makeTranslation(0.5, -.8, 0));
 			brazoIzqGroup.applyMatrix(new THREE.Matrix4().makeTranslation(-0.5, -.8, 0));
 
-			brazoDerGroupReset=brazoDerGroup;
-			brazoIzqGroupReset=brazoIzqGroup;
+			// brazoDerGroupReset=brazoDerGroup;
+			// brazoIzqGroupReset=brazoIzqGroup;
+
+			// SE ESPECIFICAN LAS GERARQUIAS
 
 			scene.add( torsoGroup );
 			torsoGroup.add(ejesGroup)
@@ -288,7 +295,7 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 			torsoGroup.add(objNalgaDer);
 			torsoGroup.add(objHombroIzq);
 			torsoGroup.add(objHombroDer);
-			
+
 			objNalgaIzq.add(objPiernaIzq);
 			objPiernaIzq.add(objRodillaIzq);
 			objRodillaIzq.add(objPiernaIzqPlus);
@@ -300,12 +307,15 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 			objHombroIzq.add(brazoIzqGroup);
 			objHombroDer.add(brazoDerGroup);
 
-			
-				siSioSiNo=0;
+
+				siSioSiNo=0; 	 // VARIABLE QUE PERMITE HACER TODOS LOS MOVIMIENTOS
 
 			objDatGuiOptios={
+
 				anguloCamara: 0,
+
 				anguloDeRotacion:0,
+
 				activarMovimiento:true,
 
 				activarMovimientofUN: function(){
@@ -317,9 +327,9 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 						siSioSiNo = 3;
 						console.log('flase');
 					}
-					
+
 				},
-				
+
 				rotcamaraFun: function() {
 				camera.position.x = Math.cos(objDatGuiOptios.anguloCamara)*20;
 				camera.position.z = Math.sin(objDatGuiOptios.anguloCamara)*20;
@@ -337,10 +347,10 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 			 	},
 
 				 posicionesFunHuir: function(){
-					
+
 					 brazoDerGroup.applyMatrix(new THREE.Matrix4().makeRotationX(THREE.Math.degToRad(90)));
 					 brazoIzqGroup.applyMatrix(new THREE.Matrix4().makeRotationX(THREE.Math.degToRad(90)));
-					 siSioSiNo = 1;					
+					 siSioSiNo = 1;
 				 },
 				 posicionesFunCruz: function () {
 
@@ -383,13 +393,13 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 					objPiernaDerPlus.applyMatrix(new THREE.Matrix4().makeRotationX(THREE.Math.degToRad((objDatGuiOptios.anguloDeRotacion - temp) * -1)));
 					temp = objDatGuiOptios.anguloDeRotacion;
 				},
-				
+
 
 				 resetear: function(){
 					 brazoDerGroup=brazoDerGroupReset;
 					 brazoIzqGroup=brazoIzqGroupReset;
 					 siSioSiNo=0;
-				 }	
+				 }
 			}
 
 			var datGuiCamaras= new dat.GUI();
@@ -398,27 +408,33 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 				datGuiCamaras.add(objDatGuiOptios, 'anguloCamara', -50, 50).onChange(objDatGuiOptios.zoomFun).step(0.001).name('Zoom');
 
 			var datGuiRotar = new dat.GUI();
+
 				datGuiRotar.add(objDatGuiOptios, 'activarMovimiento').name('Movimiento').onChange(objDatGuiOptios.activarMovimientofUN);
+
 				rotBrazosGuiFolder = datGuiRotar.addFolder('Rotar Brazos');
-				rotBrazosGuiFolder.add(objDatGuiOptios, 'anguloDeRotacion', -120, 80).onChange(objDatGuiOptios.rotarBrazosFunX).step(0.0001).name('Rotar Brazos X');
+
+				rotBrazosGuiFolder.add(objDatGuiOptios, 'anguloDeRotacion',  -120,  80).onChange(objDatGuiOptios.rotarBrazosFunX).step(0.0001).name('Rotar Brazos X');
 				rotBrazosGuiFolder.add(objDatGuiOptios, 'anguloDeRotacion',  -120, 120).onChange(objDatGuiOptios.rotarBrazosFunZ).step(0.0001).name('Rotar Brazos Z');
 				rotBrazosGuiFolder.add(objDatGuiOptios, 'anguloDeRotacion',  -120, 120).onChange(objDatGuiOptios.rotarBrazosFunY).step(0.0001).name('Rotar Brazos Y');
-				
+
+
 				rotPiernasGuiFolder  = datGuiRotar.addFolder('Rotar Piernas');
+
 				rotPiernasGuiFolder.add(objDatGuiOptios, 'anguloDeRotacion', -80, 80).onChange(objDatGuiOptios.rotarPiernasFunX).step(0.0001).name('Rotar Piernas X');
 				rotPiernasGuiFolder.add(objDatGuiOptios, 'anguloDeRotacion', -80, 0).onChange(objDatGuiOptios.rotarPiernasFunZ).step(0.0001).name('Rotar Piernas Z');
 				rotPiernasGuiFolder.add(objDatGuiOptios, 'anguloDeRotacion', -80, 0).onChange(objDatGuiOptios.rotarPantorrillasFun).step(0.0001).name('Pantorrilas');
 
 				datGuiRotar.add(objDatGuiOptios, 'posicionesFunHuir').name('Huir');
 				datGuiRotar.add(objDatGuiOptios, 'posicionesFunCruz').name('Cruz');
-			
+
 				datGuiRotar.add(objDatGuiOptios, 'resetear').name('Reset');
 
-			
+			// POSICION INICIAL DE LA CAMARA
+
 			camera.position.y = 2;
 			camera.position.z = 10;
 			camera.lookAt(torsoGroup);
-			
+
 			window.addEventListener('resize', redimencionar);
 
 			function redimencionar(){
@@ -429,7 +445,7 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 			}
 
 			renderer.render(scene, camera);
-			
+
 			}
 
     function animate() {
@@ -439,7 +455,8 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 
     function render(){
         var dtime = Date.now()-startTime;
-		var varTrasnslacion = { tx:0, ty:0, tz:0 };	
+
+		var varTrasnslacion = { tx:0, ty:0, tz:0 };
 		//var tx=0, ty=0, tz=0;			//Variables para traslacion
 		var sc = 1;						//Variable para escala
 		var theta=0;					//Variable para ángulo de rotacion de piernas
@@ -447,14 +464,14 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 		var thetaPrueba=0;
 		var sigmaPrueba=0;
 
-		
+
 		if(thetaSum>=100*Math.PI/300)   // ANGULOS DE APERTURA DE BRAZOS Y PIERNAS
 			positivo = false;
-		
+
 		if(thetaSum<=-100*Math.PI/300)
 			positivo = true;
 
-		if (thetaSumDos >= 0.2) {
+		if (thetaSumDos >= 0.2) {		// ANGULOS DE APERTURA DE PANTORRILLAS
 			positivoPrueba = false;
 
 		}
@@ -470,7 +487,7 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 
 			varTrasnslacion.tx=0; varTrasnslacion.ty=0; varTrasnslacion.tz=0.1;
 			//tx=0; ty=0; tz=.1;
-			
+
 			if(positivo){
 				theta = .05;
 				//thetaPrueba=.05;
@@ -486,7 +503,7 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 			} else {
 				thetaPrueba=-0.05;
 				//sigmaPrueba=0.05;
-			}	
+			}
 		}
 
 		if(banderasObj.downArrow) {
@@ -506,7 +523,7 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 			} else {
 				thetaPrueba = -0.05;
 				//sigmaPrueba = -0.05;
-			}	
+			}
 		}
 
 		thetaSum+=theta;
@@ -515,16 +532,16 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 			if(rightArrow)
 				sigma = -.1;
 			if(leftArrow)
-				sigma = .1;
-		
+				sigma =  .1;
 
-		//MATRIZ DE TRASLACIÓN		
+
+		//MATRIZ DE TRASLACIÓN
 		var ejesMatrix = new THREE.Matrix4();
-		
+
 		ejesMatrix.set(1, 0, 0, varTrasnslacion.tx,
-			0, 1, 0, varTrasnslacion.ty,
-			0, 0, 1, varTrasnslacion.tz,
-			0, 0, 0, 1);
+						0, 1, 0, varTrasnslacion.ty,
+						0, 0, 1, varTrasnslacion.tz,
+						0, 0, 0, 1);
 
 		torsoGroup.matrix.multiply(ejesMatrix); 	//APLICAR LA TRASLACIÓN A NIVEL LOCAL
 
@@ -532,17 +549,17 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 		var ct1 = Math.cos(theta);
 		var ct2 = Math.cos(-theta);
 		var ctp = Math.cos(thetaPrueba);
-		
+
 		var cs = Math.cos(sigma);
 		var csp= Math.cos(-sigmaPrueba);
 
 		var st1 = Math.sin(theta);
 		var st2 = Math.sin(-theta);
 		var stp = Math.sin(-thetaPrueba);
-		
+
 		var ss  = Math.sin(sigma);
 		var ssp = Math.cos(sigmaPrueba);
-		
+
 		var ry = new THREE.Matrix4();
 		var rx = new THREE.Matrix4();
 		var rz = new THREE.Matrix4();
@@ -557,36 +574,36 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 					0,  0,  0, 1 );
 		//MATRICES DE ROTACIÓN EN EJE LOCAL DE PIERNAS
 		rx.set( 	1,  0,  0, 0,
-					0, ct1,-st1, 0,  
+					0, ct1,-st1, 0,
 					0, st1, ct1, 0,
 					0,  0,  0, 1 );
 		rz.set( 	1,  0,  0, 0,
-					0, ct2,-st2, 0,		
+					0, ct2,-st2, 0,
 					0, st2, ct2, 0,
 					0,  0,  0, 1 );
-		
-		
+
+
 		rp.set(		1, 0, 	0,	 	0,
 					0, ctp, -stp, 	0,
 					0, stp, ctp, 	0,
 					0, 0,	 0, 	1);
 
 		rpBrazos.set(csp, 0, ssp, 0,
-			0, 1, 0, 0,
-			-ssp, 0, csp, 0,
-			0, 0, 0, 1);
+					0, 1, 0, 0,
+					-ssp, 0, csp, 0,
+					0, 0, 0, 1);
 
 		//ROTACION EN UN EJE PARALELO
 		var tempMatrix = new THREE.Matrix4();
 
-		
+
 			switch (siSioSiNo) {
-				case 1: // MUEVE  TOROSO Y ROTA PIERNAS NO ROTA BRAZOS 
+				case 1: // MUEVE  TOROSO Y ROTA PIERNAS NO ROTA BRAZOS
 					tempMatrix.copyPosition(torsoGroup.matrix);
 					torsoGroup.applyMatrix(new THREE.Matrix4().getInverse(tempMatrix));
 					torsoGroup.applyMatrix(ry);
 					torsoGroup.applyMatrix(tempMatrix);
-					
+
 					objPiernaIzq.applyMatrix(rx);
 					objPiernaDer.applyMatrix(rz);
 					objPiernaIzqPlus.applyMatrix(rp);
@@ -599,7 +616,7 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 				case 3: // NO HAY MOVIMIENTO
 
 					break;
-			
+
 				default:	// MUEVE TODO EL CUERPO =0
 
 					tempMatrix.copyPosition(torsoGroup.matrix);
@@ -614,12 +631,8 @@ var dibujarRectangulo= function(resCub, posicionx, posiciony, posicionz) {
 					brazoDerGroup.applyMatrix(rx);
 					break;
 			}
-		
-		
 
-		
-		// objBrazoDerPlus.applyMatrix(rp);
-		// objBrazoIzqPlus.applyMatrix(rp);
+
 
 
         camera.lookAt(torsoGroup.position);
