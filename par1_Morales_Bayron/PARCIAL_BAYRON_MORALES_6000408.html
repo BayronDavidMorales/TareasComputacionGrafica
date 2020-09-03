@@ -1,0 +1,107 @@
+<html>
+
+<head>
+    <title>My first three.js app</title>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        canvas {
+            display: block;
+        }
+        html, body { margin: 0; padding: 0; overflow: hidden; }
+            #info {
+                position: absolute;
+                padding: 10px;
+                width: 100%;
+                text-align: center;
+                color: #FFFFFF;
+            }
+    </style>
+</head>
+
+<body>
+    <div id="info">PARCIAL PRIMER CORTE<br />
+        SISTEMA SOLAR<br />
+        BAYRON DAVID MORALES VANEGAS 600408<br />
+        PLANTILLA TOMADA DE LA DOCUMENTACION DE THREEJS.ORG
+        
+    </div>
+    <script src="js/three.js"></script>
+    <script>
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+         var diibujarEsfera = function (radio, posicionx, posiciony, posicionz, color, name) {
+
+                //basado en el algoritmo de construccion de esfera tomado de http://esferaopengl.blogspot.com
+                var geoEsfera = new THREE.Geometry();
+                var increRadE = Math.PI / 25;
+                var resES = 2;
+
+                for (var i = 0; i < Math.PI; i += increRadE) {
+                    for (var j = 0; j < 2 * Math.PI; j += increRadE) {
+                        var punto2 = new THREE.Vector3();
+
+                        punto2.z = radio * Math.cos(j) * Math.sin(i);
+                        punto2.y = radio * Math.cos(i);
+                        punto2.x = radio * Math.sin(j) * Math.sin(i);
+                        geoEsfera.vertices.push(punto2);
+                    }
+                }
+
+                var matEsf = new THREE.PointsMaterial({ color: color, size: 0.01 });
+                name = new THREE.Points(geoEsfera, matEsf);
+                scene.add(name);
+
+                name.translateX(posicionx);
+                name.translateY(posiciony);
+                name.translateZ(posicionz);
+                return name;
+            }
+
+        
+        objSol= diibujarEsfera          (1,   0, 0, 0, 'yellow', 'sol');
+        objMercurio= diibujarEsfera     (0.3, 1.5, 0, 1, 'silver', 'mercurio');
+        objVenus   = diibujarEsfera     (0.4, -2.3, 0, 2, 'purple', 'venus');
+        objTierra = diibujarEsfera      (0.5, 3.2, 0, -3, 'blue', 'tierra');
+        objTierraLuna = diibujarEsfera  (0.1, 0, 0.8, 0, 'silver', 'tierraLuna');
+        objmarte = diibujarEsfera       (0.35, 4.5, 0, 5, 'fuchsia', 'marte');
+        objJupiter = diibujarEsfera     (0.7, -5.6, 0, -1, 'white', 'jupiter');
+        objSaturno = diibujarEsfera     (0.6, 6.5, 0, 0, 'lime', 'saturno');
+        objUraneo = diibujarEsfera      (0.4, 7.3, 0, 7, 'aqua', 'uraneo');
+        objNeptuno = diibujarEsfera     (0.3, -7.8, 0, 2.5, 'maroon', 'neptuno');
+        objpluton = diibujarEsfera      (0.2, 8, 0, -1.6, 'red', 'pluton');
+        
+        objTierra.add(objTierraLuna);
+
+        planetasGroup = new THREE.Group()
+        planetasGroup.add(objMercurio,objVenus, objTierra, objmarte, objJupiter, objSaturno, objUraneo, objNeptuno, objpluton);
+
+        scene.add(objSol);
+        objSol.add(planetasGroup);
+        
+
+        camera.position.z = 10;
+        camera.position.y = 1;
+
+        var animate = function () {
+            requestAnimationFrame(animate);
+
+           
+          objSol.rotation.y += 0.005;
+          objTierra.rotation.z+=0.01
+
+            renderer.render(scene, camera);
+        };
+
+        animate();
+    </script>
+</body>
+
+</html>
