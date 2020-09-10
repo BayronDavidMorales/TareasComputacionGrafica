@@ -108,6 +108,7 @@
 			
 			var rotar= function(index, theta){
 				var angulo = (Math.PI * theta) / 180;
+				
 				var rx = objVectores3[index].getComponent(2) * Math.sin(angulo) + objVectores3[index].getComponent(0) * Math.cos(angulo);
 				var ry = objVectores3[index].getComponent(1);
 				var rz = objVectores3[index].getComponent(2) * Math.cos(angulo) - objVectores3[index].getComponent(0) * Math.sin(angulo);
