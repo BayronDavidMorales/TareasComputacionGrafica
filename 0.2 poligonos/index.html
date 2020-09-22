@@ -45,6 +45,10 @@
             var colorG = new THREE.Color(0x33AA33);
             var colorB = new THREE.Color(0x333366);
 
+            // var light = new  THREE.DirectionalLight(0x33AA33);
+            // light.position.set(1, 0, 1);
+            // scene.add(light);
+
             //CREAR LAS GRILLAS PARA EL ESCENARIO
             var axesHelper = new THREE.AxesHelper(size);
             var gridHelperXY = new THREE.GridHelper(size, divisions, color1, color1);
@@ -69,7 +73,7 @@
             var v2 = new THREE.Vector3(-2, 0, 0);
             var v3 = new THREE.Vector3(0, 0, 2);
             var v4 = new THREE.Vector3(0, 0, -2);
-            var v5 = new THREE.Vector3(0, 4, 0);
+            var v5 = new THREE.Vector3(0, 2, 0);
 
             geoTriangulo.vertices.push(v1);
             geoTriangulo.vertices.push(v2);
