@@ -179,17 +179,53 @@
                     cilindro = new THREE.Mesh(objDatGuiOptios.dibujarCilindros(objDatGuiOptios.radio, objDatGuiOptios.alto, objDatGuiOptios.densidad), matCil);
                     scene.add(cilindro);
                     return cilindro;
-                }
+                }, 
+                materializarCubo: function () {
+                    cilindro = new THREE.Mesh(objDatGuiOptios.dibujarCilindros(objDatGuiOptios.radio, objDatGuiOptios.radio*1.5, 1.43), matCil);
+                    scene.add(cilindro);
+                    return cilindro;
+                },
+                options: ''
 
             }
 
-            cilindroInicial = objDatGuiOptios.materializarCilindro();
+            //cilindroInicial = objDatGuiOptios.materializarCilindro();
+            var datGuiSelect = new dat.GUI();
+            var variables = new dat.GUI();
+            // VARIABLES DE CADA UNA DE LAS FIGURAS
+            var radioCil, altoCil, densidadCil, banderaCil=false;
+            var largoCubo, banderaCubo=false;
 
-            var datGuiSizeCilndro = new dat.GUI();
-            
-            datGuiSizeCilndro.add(objDatGuiOptios, 'radio', 1, 5).step(0.001).name('Radio').onChange(objDatGuiOptios.materializarCilindro);
-            datGuiSizeCilndro.add(objDatGuiOptios, 'alto', 1, 10).step(0.001).name('Altura').onChange(objDatGuiOptios.materializarCilindro);
-            datGuiSizeCilndro.add(objDatGuiOptios, 'densidad', 0.5, 2.9).step(0.00001).name('Densidad').onChange(objDatGuiOptios.materializarCilindro);
+            var barMenu = datGuiSelect.add(objDatGuiOptios, 'options', ['Cilindro', 'Cubo']).name('Figura').listen();
+            barMenu.onChange(function (value) {
+                if(value=='Cilindro'){
+                    if (banderaCubo) {
+                        variables.remove(largoCubo);
+                    }
+                    banderaCil = true;
+                    banderaCubo = false;
+                    objDatGuiOptios.materializarCilindro();
+
+                    radioCil= variables.add(objDatGuiOptios, 'radio', 1, 5).step(0.001).name('Radio').onChange(objDatGuiOptios.materializarCilindro);
+                    altoCil = variables.add(objDatGuiOptios, 'alto', 1, 10).step(0.001).name('Altura').onChange(objDatGuiOptios.materializarCilindro);
+                    densidadCil  = variables.add(objDatGuiOptios, 'densidad', 0.5, 2.9).step(0.00001).name('Densidad').onChange(objDatGuiOptios.materializarCilindro);
+                    
+                }
+                 if (value == 'Cubo') {
+                     if (banderaCil) {
+                         variables.remove(radioCil);
+                         variables.remove(altoCil);
+                         variables.remove(densidadCil);
+                     }
+                     banderaCil = false;
+                     banderaCubo = true;
+                    
+                    objDatGuiOptios.materializarCubo();
+                    largoCubo = variables.add(objDatGuiOptios, 'radio', 1, 5).step(0.001).name('L').onChange(objDatGuiOptios.materializarCubo);
+                    
+                }
+                
+            })
 
             scene.add(gridHelperXZ);
             scene.add(arrowX);
