@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Operaciones CSG</title>
+    <style>
+      html, body { margin: 0; padding: 0; overflow: hidden; }
+    </style>
+  </head>
+  <body>
+    <script src="js/three.js"></script>
+	<script src="js/controls/OrbitControls.js"></script>
+	<script src="js/csg.js"></script>
+	<script src="js/THREE.CSG.js"></script>
+	<script>
+		
+		class LamparaMug{
+			static lamparaMug(){
+				//ELEMENTOS COMUNES
+				var size = 1;
+				var arrowSize = 1;
+				var divisions = size;
+				var origin = new THREE.Vector3(0, 0, 0);
+				var x = new THREE.Vector3(1, 0, 0);
+				var y = new THREE.Vector3(0, 1, 0);
+				var z = new THREE.Vector3(0, 0, 1);
+				var color = new THREE.Color(0x333333);
+				var colorR = new THREE.Color(0xCC3333);
+				var colorG = new THREE.Color(0x33CC33);
+				var colorB = new THREE.Color(0x3333CC);
+
+				//CREAR LAS GRILLAS PARA EL ESCENARIO
+				var axesHelper = new THREE.AxesHelper(size);
+				scene.add(axesHelper);
+
+				var gridHelperXZ = new THREE.GridHelper(size, divisions, color, color);
+				scene.add(gridHelperXZ);
+
+				//ROTARLAS PARA QUE QUEDEN EN EL ESPACIO ADECUADO
+				gridHelperXZ.rotateOnWorldAxis(y, THREE.Math.degToRad(90));
+
+				//CREAR ILUMINACIÓN
+				var ambient = new THREE.AmbientLight(0xffffff, 2);
+				scene.add(ambient);
+
+				var pointLight = new THREE.PointLight(0xffffff, 1, 100);
+				pointLight.position.set(-5, -2, 5);
+				scene.add(pointLight);
+
+				var pointLight = new THREE.PointLight(0xffffff, .5, 100);
+				pointLight.position.set(5, -2, -5);
+				scene.add(pointLight);
+
+				//CREAR LAS GEOMETRÍAS
+				// LAMPARA
+				var sphereGeometry = new THREE.SphereGeometry(0.1, 32, 32);
+				var sphereGeometry2 = new THREE.SphereGeometry(0.2, 32, 32);
+				var sphereGeometry3 = new THREE.SphereGeometry(0.3, 32, 32);
+				var sphereGeometry4 = new THREE.SphereGeometry(0.1, 32, 32);
+				var torusGeometry = new THREE.TorusGeometry(0.4, 0.08, 32, 32);
+				var planeGeometry = new THREE.PlaneGeometry(0.65, 0.65, 1);
+				var planeSueloGeometry = new THREE.PlaneGeometry(10, 10, 1);
+				var cylinderGeometry = new THREE.CylinderGeometry(0.04, 0.04, 1, 10);
+				var cylinderGeometry2 = new THREE.CylinderGeometry(0.04, 0.04, 0.5, 10);
+				// MUG
+				var mugCylinderGeometry = new THREE.CylinderGeometry(0.25, 0.12, 0.5, 20);
+				var mug2CylinderGeometry = new THREE.CylinderGeometry(0.23, 0.11, 0.45, 20);
+				var mugTorusGeometry = new THREE.TorusGeometry(0.2, 0.04, 32, 32);
+				//CREAR LOS MATERIALES
+				var material1 = new THREE.MeshStandardMaterial({
+					color: colorR, metalness: 0.5, roughness: 0.1,
+					transparent: true, opacity: 0.7
+				})
+				var material2 = material1.clone();
+				material2.color = colorR;
+				material2.opacity = 0.3;
+				var material3 = material1.clone();
+				material3.color = colorB;
+				var material4 = material1.clone();
+				material4.color = new THREE.Color(0x33CCCC);
+				var material5 = new THREE.MeshStandardMaterial({ color: colorR, metalness: 0.5, roughness: 0.1 });
+				var material6 = new THREE.MeshStandardMaterial({ color: colorG, metalness: 0.5, roughness: 0.1 });
+				var material7 = new THREE.MeshStandardMaterial({ color: 'white', metalness: 0.5, roughness: 0.1 });
+
+				//CREAR LAS MALLAS
+				// LAMPARA
+				var sphere = new THREE.Mesh(sphereGeometry);
+				var sphere2 = new THREE.Mesh(sphereGeometry2);
+				var sphere3 = new THREE.Mesh(sphereGeometry3);
+				var sphere4 = new THREE.Mesh(sphereGeometry4, material7);
+
+				var torus1 = new THREE.Mesh(torusGeometry);
+				var plao1 = new THREE.Mesh(planeGeometry);
+				var cilindroUno = new THREE.Mesh(cylinderGeometry);
+				var cilindroDos = new THREE.Mesh(cylinderGeometry2);
+
+				var suelo = new THREE.Mesh(planeSueloGeometry);
+				// MUG
+				var mugExt = new THREE.Mesh(mugCylinderGeometry);
+				var mugInt = new THREE.Mesh(mug2CylinderGeometry);
+				var mugAgarre = new THREE.Mesh(mugTorusGeometry);
+
+
+				//TRASLADAR LAS MALLAS A SU LUGAR ADECUADO
+				// LAMPARA
+				suelo.rotateX(-Math.PI / 2);
+
+				cilindroUno.translateY(0.5);
+				cilindroDos.translateY(1);
+
+				sphere.translateY(1.2);
+				sphere.translateZ(0.2);
+
+				sphere2.translateY(1.2);
+				sphere2.translateZ(0.4);
+
+				sphere3.translateY(1);
+				sphere3.translateZ(0.5);
+
+				sphere4.translateY(1.2);
+				sphere4.translateZ(0.4);
+
+				sphere.rotateX(Math.PI / 2);
+				cilindroDos.rotateX(Math.PI / 4.0);
+
+				torus1.rotateX(Math.PI / 2.0);
+				plao1.translateY(0.01);
+				plao1.rotateX(-Math.PI / 2);
+				// MUG
+				mugExt.translateX(1);
+				mugExt.translateY(0.25);
+
+				mugInt.translateX(1);
+				mugInt.translateY(0.3);
+
+				mugAgarre.translateX(1.15);
+				mugAgarre.translateY(0.25);
+
+
+
+
+				//CONVERTIR A CSG
+				// LAMPARA
+				var sphereCSG = THREE.CSG.fromMesh(sphere);
+				var sphere2CSG = THREE.CSG.fromMesh(sphere2);
+				var sphere3CSG = THREE.CSG.fromMesh(sphere3);
+
+				var torus1CSG = THREE.CSG.fromMesh(torus1);
+				var plao1CSG = THREE.CSG.fromMesh(plao1);
+				var sueloCSG = THREE.CSG.fromMesh(suelo);
+				var cilindroUnoCSG = THREE.CSG.fromMesh(cilindroUno);
+				var cilindroDosCSG = THREE.CSG.fromMesh(cilindroDos);
+				// MUG
+				var mugExtCSG = THREE.CSG.fromMesh(mugExt);
+				var mugIntCSG = THREE.CSG.fromMesh(mugInt);
+				var mugAgarreCSG = THREE.CSG.fromMesh(mugAgarre);
+
+				// OPERACIONES 
+				// LAMPARA
+				var result1 = sphereCSG.union(sphere2CSG);	 // UNION DE ESFERA
+				var result2 = plao1CSG.union(torus1CSG);   // BASE, TOROIDE Y PLANO
+				var result3 = result1.subtract(sphere3CSG);// RESTA 3 ESFERAS, LE DA FORMA AL FOCO
+				var result4 = cilindroUnoCSG.union(cilindroDosCSG);	// UNE LA BASE Y EL FOCO
+				var unionTotal = result2.union(result3).union(result4);  // SE UNEN TODAS LAS PARTES 
+				// MUG
+				var resultMug2 = mugExtCSG.subtract(mugIntCSG);
+				var resultMug1 = mugAgarreCSG.subtract(mugIntCSG);
+				var resultMug = resultMug1.union(resultMug2);
+
+				//CONVERTIR A MALLA DE THREE JS NUEVAMENTE
+				var C2T1 = THREE.CSG.toMesh(result1);
+				var C2T2 = THREE.CSG.toMesh(result2);
+				var C2T3 = THREE.CSG.toMesh(result3);
+				var C2T4 = THREE.CSG.toMesh(result4);
+				var C2Total = THREE.CSG.toMesh(unionTotal);
+				var C2Mug = THREE.CSG.toMesh(resultMug);
+
+				C2T1.material = material5;
+				C2T2.material = material5;
+				C2T3.material = material5;
+				C2Total.material = material5;
+				C2Mug.material = material6;
+
+				// scene.add(torus1);
+				// scene.add(plao1);
+				// scene.add(cilindroUno);
+				// scene.add(cilindroDos);
+				// scene.add(sphere);
+				// scene.add(sphere2);
+				// scene.add(sphere3);
+
+				// MUG
+				// scene.add(mugAgarre);
+				// scene.add(mugExt);
+				// scene.add(mugInt);
+
+				scene.add(C2Total);
+				scene.add(C2Mug);
+				scene.add(sphere4);
+				scene.add(suelo);
+				
+			} 
+		}
+		class SolidoEnRevolucion{
+			static solidoEnRevolucion(){
+				var curve2D = [];
+				curve2D[0] = new THREE.Vector2(0, 0);
+				curve2D[1] = new THREE.Vector2(0.3, 0);
+				curve2D[2] = new THREE.Vector2(0.6, 0.3);
+				curve2D[3] = new THREE.Vector2(0.6, 0.6);
+				curve2D[4] = new THREE.Vector2(0.3, 1);
+				curve2D[5] = new THREE.Vector2(0.3, 1.3);
+				curve2D[6] = new THREE.Vector2(0, 1.6);
+				curve2D[7] = new THREE.Vector2(0.3, 2.3);
+				curve2D[8] = new THREE.Vector2(0.6, 2.3);
+				curve2D[9] = new THREE.Vector2(0.3, 1.6);
+				curve2D[10] = new THREE.Vector2(0.6, 1.6);
+				curve2D[11] = new THREE.Vector2(0.3, 2.3);
+				curve2D[11] = new THREE.Vector2(0, 2.3);
+
+				var shape = new THREE.Shape();
+
+				shape.moveTo(0, 0);
+				shape.splineThru(curve2D);
+
+				var material = new THREE.LineBasicMaterial({ color: 0xff0000 });
+				var resolution = 10;
+				var points = shape.getPoints(resolution);
+				var geometry = new THREE.BufferGeometry().setFromPoints(points);
+				// Create the final object to add to the scene
+				var curveObject = new THREE.Line(geometry, material);
+
+				var geometry = new THREE.LatheGeometry(points, 10);
+				var material = new THREE.MeshStandardMaterial({
+					color: 0xAA3333,
+					metalness: 0.5,
+					roughness: 0.1,
+					opacity: 0.75,
+					transparent: true
+				});
+
+				var lathe = new THREE.Mesh(geometry, material);
+
+				var grupo= new THREE.Group();
+				grupo.add(lathe, curveObject);
+				grupo.translateX(-1.5);
+				scene.add(grupo);
+				// scene.add(lathe);
+				
+				// scene.add(curveObject);
+			}
+		}
+	</script>
+    <script>
+		var scene, aspect, camera, renderer, controls;
+		init();
+		animate();
+		function init(){
+			//INICIALIZACIÓN
+	        scene = new THREE.Scene();
+	        aspect = window.innerWidth / window.innerHeight;
+	        camera = new THREE.PerspectiveCamera( 75, aspect, 0.1, 1000);
+	        renderer = new THREE.WebGLRenderer();
+	        renderer.setSize( window.innerWidth, window.innerHeight );
+	        document.body.appendChild( renderer.domElement );
+			controls = new THREE.OrbitControls( camera, renderer.domElement );
+			
+			
+
+			
+			LamparaMug.lamparaMug();
+			SolidoEnRevolucion.solidoEnRevolucion();
+
+
+			camera.position.x = 2;
+			camera.position.y = 2;
+		  	camera.position.z = 5;
+			camera.lookAt( origin );
+		}
+		function animate(){
+			requestAnimationFrame( animate );
+			controls.update();
+			render();
+		}
+		function render(){
+			renderer.render( scene, camera );
+		}
+    </script>
+  </body>
+</html>
