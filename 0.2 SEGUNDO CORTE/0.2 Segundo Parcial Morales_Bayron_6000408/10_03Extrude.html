@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Segundo Parcial MoralesBayron</title>
+    <style>
+      html, body { margin: 0; padding: 0; overflow: hidden; }
+    </style>
+  </head>
+  <body>
+    <script src="js/three.js"></script>
+	<script src="js/controls/OrbitControls.js"></script>
+	<script src="js/csg.js"></script>
+	<script src="js/THREE.CSG.js"></script>
+	
+	<script>
+		var scene, aspect, camera, renderer, controls;
+		var thetaSum = 0;
+		var thetaSum2 = 0;
+		var positivo = false;
+		var upArrow = false;
+		var downArrow = false;
+		var leftArrow = false;
+		var rightArrow = false;
+		var scaleUp = false;
+		var scaleDown = false;
+		
+
+		var marco, neumaticoIzqSup, neumaticoIzqInf, neumaticoDerSup, neumaticoDerInf;
+		init();
+		animate();
+		function init(){
+			//INICIALIZACIÓN
+	        scene = new THREE.Scene();
+	        aspect = window.innerWidth / window.innerHeight;
+	        camera = new THREE.PerspectiveCamera( 75, aspect, 0.1, 1000);
+	        renderer = new THREE.WebGLRenderer();
+	        renderer.setSize( window.innerWidth, window.innerHeight );
+	        document.body.appendChild( renderer.domElement );
+			controls = new THREE.OrbitControls( camera, renderer.domElement );
+			controls.enableKeys=false;
+			
+			var onKeyDown = function (event) {
+				switch (event.keyCode) {
+					case 38: // TRASLADAR ADELANTE
+						upArrow = true;
+						break;
+					case 40: // TRASLADAR ATRÁS
+						downArrow = true;
+						break;
+					case 83: // ESCALA AGRANDAR
+						scaleUp = true;
+						break;
+					case 87: // ESCALA DISMINUIR
+						scaleDown = true;
+						break;
+					case 37: // ROTAR CW
+						leftArrow = true;
+						break;
+					case 39: // ROTAR CCW
+						rightArrow = true;
+						break;
+					case 88: // SELECCIONAR EJE X DE ROTACION
+						yAxis = false;
+						zAxis = false;
+						xAxis = true;
+						break;
+					case 89: // SELECCIONAR EJE Y DE ROTACION
+						xAxis = false;
+						zAxis = false;
+						yAxis = true;
+						break;
+					case 90: // SELECCIONAR EJE Z DE 
+						xAxis = false;
+						yAxis = false;
+						zAxis = true;
+						break;
+				}
+			};
+
+			var onKeyUp = function (event) {
+				switch (event.keyCode) {
+					case 38: // TRASLADAR
+						upArrow = false;
+						break;
+					case 40: // TRASLADAR
+						downArrow = false;
+						break;
+					case 37: // ROTAR CW
+						leftArrow = false;
+						break;
+					case 39: // ROTAR CCW
+						rightArrow = false;
+						break;
+					case 83: // ESCALA AGRANDAR
+						scaleUp = false;
+						break;
+					case 87: // ESCALA DISMINUIR
+						scaleDown = false;
+						break;
+				}
+			};
+
+			document.addEventListener('keydown', onKeyDown, false);
+			document.addEventListener('keyup', onKeyUp, false);
+			//ELEMENTOS COMUNES
+			var size = 40;
+			var arrowSize = 1;
+			var divisions = size;
+			var origin = new THREE.Vector3(0, 0, 0);
+			var x = new THREE.Vector3(1, 0, 0);
+			var y = new THREE.Vector3(0, 1, 0);
+			var z = new THREE.Vector3(0, 0, 1);
+			var color = new THREE.Color(0x333333);
+			var colorR = new THREE.Color(0xCC3333);
+			var colorG = new THREE.Color(0x33CC33);
+			var colorB = new THREE.Color(0x3333CC);
+
+			var planeGeometry = new THREE.PlaneGeometry(100, 100, 32);
+			var planeMaterial = new THREE.MeshBasicMaterial({ color: 'blue', side: THREE.DoubleSide });
+			var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+			plane.rotateX(Math.PI/2)
+			plane.translateZ(1);
+			scene.add(plane);
+
+
+			//CREAR ILUMINACIÓN
+			var ambient = new THREE.AmbientLight(0xffffff, 2);
+			scene.add(ambient);
+
+			var pointLight = new THREE.PointLight(0xffffff, 1, 100);
+			pointLight.position.set(-5, -2, 5);
+			scene.add(pointLight);
+
+			var pointLight = new THREE.PointLight(0xffffff, .5, 100);
+			pointLight.position.set(5, 2, -5);
+			scene.add(pointLight);
+			
+
+			
+			function neumaticos() {
+				
+				var torusGeometry = new THREE.TorusGeometry(0.7, 0.3, 42, 32);
+				var sphereGeometry = new THREE.SphereGeometry(0.7, 32, 32);
+				var CylinderGeometry = new THREE.CylinderGeometry(0.1, 0.05, 0.3, 20);
+				var CylinderGeometryDos = new THREE.CylinderGeometry(0.1, 0.2, 0.2, 20);
+				var CylinderGeometryTres = new THREE.CylinderGeometry(0.18, 0.18, 0.2, 20);
+				var Conogeometry = new THREE.ConeGeometry(0.1, 0.1, 32);
+				var boxgeometry = new THREE.BoxGeometry(1.4, 1.4, 0.1);
+
+				var material1 = new THREE.MeshStandardMaterial({
+					color: 'red', metalness: 0.5, roughness: 0.1,
+					transparent: false, opacity: 0.7
+				})
+				var material2 = new THREE.MeshStandardMaterial({
+					color: 'red', metalness: 0.8, roughness: 1,
+					transparent: false, opacity: 1
+				})
+
+
+
+
+				var torus = new THREE.Mesh(torusGeometry);
+				var sphre = new THREE.Mesh(sphereGeometry);
+				var Cylinder = new THREE.Mesh(CylinderGeometry);
+				var CylinderDos = new THREE.Mesh(CylinderGeometryDos);
+				var CylinderTres = new THREE.Mesh(CylinderGeometryTres);
+				var Cone = new THREE.Mesh(Conogeometry);
+				var box = new THREE.Mesh(boxgeometry);
+
+				CylinderDos.rotateX(Math.PI / 2);
+				CylinderTres.rotateX(Math.PI / 2);
+				Cylinder.translateY(-0.5);
+				Cone.translateY(-0.2);
+
+
+				var coneCSG = THREE.CSG.fromMesh(Cone);
+				var cylinderCSG = THREE.CSG.fromMesh(Cylinder);
+				var boxCSG = THREE.CSG.fromMesh(box);
+				var result1 = coneCSG.union(cylinderCSG);
+
+				var forma = THREE.CSG.toMesh(result1);
+				var forma1 = forma.clone();
+				forma1.rotateZ(Math.PI / 4);
+
+				var forma2 = forma.clone();
+				forma2.rotateZ(Math.PI / 2);
+
+				var forma3 = forma.clone();
+				forma3.rotateZ(3 * Math.PI / 4);
+
+				var forma4 = forma.clone();
+				forma4.rotateZ(Math.PI / 1);
+
+				var forma5 = forma.clone();
+				forma5.rotateZ(5 * Math.PI / 4);
+
+				var forma6 = forma.clone();
+				forma6.rotateZ(3 * Math.PI / 2);
+
+				var forma7 = forma.clone();
+				forma7.rotateZ(7 * Math.PI / 4);
+
+
+
+				var formaCSG = THREE.CSG.fromMesh(forma);
+				var forma1CSG = THREE.CSG.fromMesh(forma1);
+				var forma2CSG = THREE.CSG.fromMesh(forma2);
+				var forma3CSG = THREE.CSG.fromMesh(forma3);
+				var forma4CSG = THREE.CSG.fromMesh(forma4);
+				var forma5CSG = THREE.CSG.fromMesh(forma5);
+				var forma6CSG = THREE.CSG.fromMesh(forma6);
+				var forma7CSG = THREE.CSG.fromMesh(forma7);
+				var cylinderDosCSG = THREE.CSG.fromMesh(CylinderDos);
+				var cylinderTresCSG = THREE.CSG.fromMesh(CylinderDos);
+
+
+				var result2 = boxCSG.subtract(formaCSG).subtract(forma1CSG).subtract(forma2CSG).subtract(forma3CSG).subtract(forma4CSG).subtract(forma5CSG).subtract(forma6CSG).subtract(forma7CSG).subtract(cylinderDosCSG);
+
+
+				var torusCSG = THREE.CSG.fromMesh(torus);
+				var sphereCSG = THREE.CSG.fromMesh(sphre);
+
+				var result3 = torusCSG.subtract(sphereCSG).union(result2);
+				var llantaEntera = THREE.CSG.toMesh(result3);
+				llantaEntera.material = material2;
+
+
+
+				scene.add(llantaEntera);
+				return llantaEntera;
+				
+			}
+
+			function extrude() {
+				var curve2D = [];
+				curve2D[0] = new THREE.Vector2(0.8219900345244, -0.4960033218252)
+				curve2D[1] = new THREE.Vector2(0.8909950172622, 0.2017137258569)	
+				curve2D[2] = new THREE.Vector2(0.6456439675279, 0.6770813847172)
+				curve2D[3] = new THREE.Vector2(0.2316140711012, 0.9531013156683)	
+				curve2D[4] = new THREE.Vector2(-0.6194473826649, 0.9454340953641)
+				curve2D[5] = new THREE.Vector2(-1.0718133806126, 0.5390714192416)
+				curve2D[6] = new THREE.Vector2(-1.2328250070007, 0.0483693197729)	
+				curve2D[7] = new THREE.Vector2(-1.1868216851755, -0.3809950172622)
+				curve2D[8] = new THREE.Vector2(-1.4628416161267, -0.3656605766538)	
+				curve2D[9] = new THREE.Vector2(-1.8001993095114, -0.373327796958)
+				curve2D[10] = new THREE.Vector2(-1.9228748343786, -0.3426589157412)
+				curve2D[11] = new THREE.Vector2(-2.1375570028961, -0.0896406457027)
+				curve2D[12] = new THREE.Vector2(-2.2372308668507, 0.2630514882904)
+				curve2D[13] = new THREE.Vector2(-2.2295636465465, 0.8304257908011)
+				curve2D[14] = new THREE.Vector2(-2.0685520201584, 1.213786806011)
+				curve2D[15] = new THREE.Vector2(-2, 1.5)
+				curve2D[16] = new THREE.Vector2(-1.860358125695, 1.5034889709233)
+				curve2D[17] = new THREE.Vector2(-1.8393055778959, 1.6207817372324)
+				curve2D[18] = new THREE.Vector2(-1.8964482076363, 1.6869468874581)
+				curve2D[19] = new THREE.Vector2(-2.010733467117, 1.74108201037)
+				curve2D[20] = new THREE.Vector2(-1.7159977979299, 1.7771720923113)
+				curve2D[21] = new THREE.Vector2(-1.3701345126593, 1.768149571826)
+				curve2D[22] = new THREE.Vector2(-1.2618642668355, 1.7140144489141)
+				curve2D[23] = new THREE.Vector2(-1.1175039390703, 1.5726616279774)
+				curve2D[24] = new THREE.Vector2(-0.7626181333144, 1.6478492986884)
+				curve2D[25] = new THREE.Vector2(-0.1430717266558, 1.8824348313067)
+				curve2D[26] = new THREE.Vector2(0.5967749531405, 2.0929603092975)
+				curve2D[27] = new THREE.Vector2(1.5321095767853, 2.2704032121755)
+				curve2D[28] = new THREE.Vector2(2.7531573491319, 2.3726584443424)
+				curve2D[29] = new THREE.Vector2(3.1561632641429, 2.342583376058)
+				curve2D[30] = new THREE.Vector2(3.3245836465355, 2.3095008009452)
+				curve2D[31] = new THREE.Vector2(4.2749558043226, 1.918524913248)
+				curve2D[32] = new THREE.Vector2(5.0478850592316, 1.5185265050655)
+				curve2D[33] = new THREE.Vector2(5.4689360152132, 1.5365715460361)
+				curve2D[34] = new THREE.Vector2(6.5907360622214, 1.4343163138691)
+				curve2D[35] = new THREE.Vector2(7.6, 1.2)
+				curve2D[36] = new THREE.Vector2(8.2869699134615, 0.9260476598628)
+				curve2D[37] = new THREE.Vector2(8.3741876114863, 0.8568750028087)
+				curve2D[38] = new THREE.Vector2(8.4583978026826, 0.7305597160142)
+				curve2D[39] = new THREE.Vector2(8.5245629529083, 0.613266949705)
+				curve2D[40] = new THREE.Vector2(8.5486230075358, 0.4358240468271)
+				curve2D[41] = new THREE.Vector2(8.536592980222, 0.2012385142088)
+				curve2D[42] = new THREE.Vector2(8.536592980222, 0)
+				curve2D[43] = new THREE.Vector2(8.5967431167908, -0.1145497027774)
+				curve2D[44] = new THREE.Vector2(8.6328331987321, -0.1716923325178)
+				curve2D[45] = new THREE.Vector2(8.6448632260459, -0.2679325510279)
+				curve2D[46] = new THREE.Vector2(8.5756905689918, -0.3340977012536)
+				curve2D[47] = new THREE.Vector2(8.3170449817459, -0.3762027968517)
+				curve2D[48] = new THREE.Vector2(7.6, -0.4)
+				curve2D[49] = new THREE.Vector2(7.613288383891, -0.0513920593802)
+				curve2D[50] = new THREE.Vector2(7.5531382473222, 0.3816889239152)
+				curve2D[51] = new THREE.Vector2(7.435845481013, 0.592214401906)
+				curve2D[52] = new THREE.Vector2(7.2824626327626, 0.7576272774701)
+				curve2D[52] = new THREE.Vector2(6.9426143611488, 0.9380776871765)
+				curve2D[53] = new THREE.Vector2(6.5636685007654, 0.9922128100885)
+				curve2D[54] = new THREE.Vector2(6.1757001198966, 0.9110101257206)
+				curve2D[55] = new THREE.Vector2(5.9170545326508, 0.7365747296711)
+				curve2D[56] = new THREE.Vector2(5.7426191366013, 0.4989816902243)
+				curve2D[57] = new THREE.Vector2(5.631341383949, 0.2042460210372)
+				curve2D[58] = new THREE.Vector2(5.6253263702921, -0.1927448803169)
+				curve2D[59] = new THREE.Vector2(5.6674314658902, -0.412292878793)
+				curve2D[60] = new THREE.Vector2(5.7576566707435, -0.4664280017049)
+				curve2D[61] = new THREE.Vector2(3.5681916996392, -0.4814655358471)
+				curve2D[62] = new THREE.Vector2(0.9727133066955, -0.4995105768178)
+
+				var curve22D = [];
+				curve22D[0] = new THREE.Vector2(4.463041514856, 1.477428477351)
+				curve22D[1] = new THREE.Vector2(3.0378611117408, 2.2441922030036)
+				curve22D[2] = new THREE.Vector2(1.7918700575553, 2.1400123489747)
+				curve22D[3] = new THREE.Vector2(1.7001917860099, 2.0858388248797)
+				curve22D[4] = new THREE.Vector2(1.675188621043, 1.9899933591731)
+				curve22D[5] = new THREE.Vector2(1.8043716400388, 1.5607723605741)
+				curve22D[6] = new THREE.Vector2(3.3420662855052, 1.4899300598344)
+
+				var curve23D = [];
+				curve23D[0] = new THREE.Vector2(1.3834850297621, 1.6441162437972)
+				curve23D[1] = new THREE.Vector2(1.3126427290225, 1.8983150876277)
+				curve23D[2] = new THREE.Vector2(0.9667656136466, 1.8233055927269)
+				curve23D[3] = new THREE.Vector2(0.8250810121673, 1.6607850204418)
+
+
+				var shape = new THREE.Shape();
+				shape.moveTo(0.8219900345244, -0.4960033218252)
+				var shape2 = new THREE.Shape();
+				shape2.moveTo(4.463041514856, 1.477428477351)
+				var shape3 = new THREE.Shape();
+				shape3.moveTo(1.3834850297621, 1.6441162437972)
+
+
+
+				shape.splineThru(curve2D);
+				shape2.splineThru(curve22D);
+				shape3.splineThru(curve23D);
+
+
+				shape.holes.push(shape2);
+				shape.holes.push(shape3);
+
+
+				var material = new THREE.LineBasicMaterial({ color: '#EED71E' });
+				var resolution = 50;
+				var points = shape.getPoints(resolution);
+				var geometry = new THREE.BufferGeometry().setFromPoints(points);
+				var curveObject = new THREE.Line(geometry, material);
+
+				var extrudeSettings = {
+					steps: 2,
+					amount: 5,
+					bevelEnabled: false,
+				};
+
+				var geometryExt = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+				var materialExt = new THREE.MeshStandardMaterial({
+					color: 'gray',
+				});
+
+				var mesh = new THREE.Mesh(geometryExt, materialExt);
+				// mesh.translateZ(-5);
+				// mesh.translateX(5);
+
+				return mesh;
+
+			}
+
+			curvasCarro= extrude();
+			neumaticoDerInf=neumaticos();
+			neumaticoDerInf.position.set(-0, 0, 0);
+
+			neumaticoIzqInf=neumaticoDerInf.clone();
+			neumaticoIzqInf.position.set(-0, 0, 5);
+
+			neumaticoDerSup=neumaticoDerInf.clone();
+
+			neumaticoIzqSup = neumaticoDerInf.clone();
+			neumaticoIzqSup.position.set(0, 0, 5);
+
+			var sphereGeometry = new THREE.SphereGeometry(0.01, 32, 32);
+			var sphre = new THREE.Mesh(sphereGeometry);
+			sphre.position.set(6.7, 0, 0);
+
+			var material1 = new THREE.MeshStandardMaterial({
+				color: 'red', metalness: 0.5, roughness: 0.1,
+				transparent: true, opacity: 0.7
+			})
+			var material2 =  new THREE.MeshStandardMaterial({ color: 'black', roughness: 1 });
+			var material3 =  new THREE.MeshStandardMaterial({ color: 'white', roughness: 1 });
+
+			var geometry = new THREE.CylinderGeometry(0.2, 0.2, 1, 32);
+			var cylinder = new THREE.Mesh(geometry, material2);
+			cylinder.rotateZ(Math.PI/2);
+			cylinder.translateX(0);
+			cylinder.translateY(1.8);
+			cylinder.translateZ(2.3);
+
+			var cylinder2=cylinder.clone();
+			cylinder2.translateZ(0.55);
+
+			var spGeometry = new THREE.SphereGeometry(0.3, 32, 32);
+			var sphere2 = new THREE.Mesh(spGeometry, material1);
+			sphere2.position.set(-2, 1, 1);
+			var sphere3=sphere2.clone();
+			sphere3.position.set(-2, 1, 4);
+
+			sphere4= new THREE.Mesh(spGeometry, material3);
+			sphere4.position.set(8, 1, 0.5);
+
+			sphere5 = sphere4.clone();
+			sphere5.position.set(8, 1, 4.5);
+
+			sphere6 = new THREE.Mesh(spGeometry, material3);
+			sphere6.position.set(-2, 1, 4.6);
+
+			sphere7 = sphere6.clone();
+			sphere7.position.set(-2, 1, .4);
+
+			var Placageometry = new THREE.BoxGeometry(0.5, 0.5, 1);
+			var Placamaterial = new THREE.MeshBasicMaterial({ color: 'yellow' });
+			var placa = new THREE.Mesh(Placageometry, Placamaterial);
+			
+			placa.position.set(-2, 0.5, 2.6);
+
+			var placaDel=placa.clone();
+			placaDel.position.set(8.3, 0.1, 2.6);
+
+			curvasCarro.add(placa);
+			curvasCarro.add(placaDel);
+			curvasCarro.add(cylinder);
+			curvasCarro.add(cylinder2);
+			curvasCarro.add(sphere2);
+			curvasCarro.add(sphere3);
+			curvasCarro.add(sphere4);
+			curvasCarro.add(sphere5);
+			curvasCarro.add(sphere6);
+			curvasCarro.add(sphere7);
+			curvasCarro.add(neumaticoDerInf);
+			curvasCarro.add(neumaticoIzqInf);
+			sphre.add(neumaticoDerSup);
+			sphre.add(neumaticoIzqSup);
+			curvasCarro.add(sphre);
+			scene.add(curvasCarro);
+			
+
+			camera.position.x = 0;
+			camera.position.y = 5;
+		  	camera.position.z = 20;
+			
+		}
+		function animate(){
+			requestAnimationFrame( animate );
+			controls.update();
+			render();
+		}
+		function render(){
+			renderer.render( scene, camera );
+			var tx = 0, ty = 0, tz = 0;	
+			var sc = 1;				
+			var theta = 0;					
+			var sigma = 0;			
+
+
+			if (upArrow) {
+				tx = 0.2; ty = 0; tz = 0;
+				
+					theta = -.2;
+
+				
+			}
+			if (downArrow) {
+				tx = -0.2; ty = 0; tz = 0;
+				
+					theta = .2;
+	
+
+			}
+			thetaSum += theta;
+			
+
+			if (rightArrow)
+				sigma = -.1;
+			if (leftArrow)
+				sigma = .1;
+
+			//MATRIZ DE TRASLACIÓN
+			var t = new THREE.Matrix4();
+			t.set(1, 0, 0, tx,
+				0, 1, 0, ty,
+				0, 0, 1, tz,
+				0, 0, 0, 1);
+
+			curvasCarro.matrix.multiply(t); 
+
+			//ROTACIONES
+			var ct = Math.cos(theta);
+			var cs = Math.cos(sigma);
+			var st = Math.sin(theta);
+			var ss = Math.sin(sigma);
+
+
+			var rx = new THREE.Matrix4();
+			var ry = new THREE.Matrix4();
+			var rz = new THREE.Matrix4();
+			var rz2 = new THREE.Matrix4();
+			
+			rx.set(1, 0, 0, 0,
+				  0, ct, -st, 0,
+				  0, st, ct, 0,
+				  0, 0, 0, 1);
+			ry.set(cs, 0, ss, 0,
+				  0, 1, 0, 0,
+				  -ss, 0, cs, 0,
+				  0, 0, 0, 1);
+			rz.set(ct, -st, 0, 0,
+				  st, ct, 0, 0,
+				  0, 0, 1, 0,
+				  0, 0, 0, 1);
+
+
+			//ROTACION EN UN EJE PARALELO
+			var tempMatrix = new THREE.Matrix4();
+			tempMatrix.copyPosition(curvasCarro.matrix);
+			curvasCarro.applyMatrix(new THREE.Matrix4().getInverse(tempMatrix));
+			curvasCarro.applyMatrix(ry);
+			curvasCarro.applyMatrix(tempMatrix);
+
+
+			neumaticoDerInf.applyMatrix(rz);
+			neumaticoIzqInf.applyMatrix(rz);
+			neumaticoDerSup.applyMatrix(rz);
+			neumaticoIzqSup.applyMatrix(rz);
+
+			camera.lookAt(curvasCarro.position);
+			renderer.render(scene, camera);
+			
+		
+		}
+    </script>
+  </body>
+</html>
