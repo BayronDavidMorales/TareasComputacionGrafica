@@ -447,6 +447,8 @@
 				texture.repeat.set(4, 4);
 				var material = new THREE.MeshLambertMaterial({ map: texture });
 				materialLineas = new THREE.MeshLambertMaterial({ color: 'yellow' });
+				// ALGORITMO DE CAMARA EN PRIMERA PERSONA BASADO EN 
+				// https://github.com/mrdoob/three.js/blob/master/examples/jsm/controls/PointerLockControls.js 
 				var raycaster;
 				var blocker = document.getElementById('blocker');
 				var instructions = document.getElementById('instructions');
@@ -642,6 +644,8 @@
 				var calle2OesteEste = complementos.crearCalleEsteOeste(9, 1700, 400);
 				var calle3SurNorte =  complementos.crearCalleSurNorte(9, -1000, 1500);
 				// cielo
+				//ALGORITMO DE SKYBOX TOMADO DE
+				//https://threejsfundamentals.org/threejs/lessons/threejs-backgrounds.html
 				const loader = new THREE.TextureLoader();
 				const textureSky = loader.load(
 					'images/sky.jpg',
@@ -651,6 +655,8 @@
 						scene.background = rt;
 					});
 				// cubo real
+				// ALGORITMO DE PONER CUBOS TIPO MINECRAFT BASADO EN
+				// https://threejs.org/examples/#webgl_interactive_voxelpainter
 				texture = new THREE.TextureLoader().load("images/ladrillo.png");
 				texture.wrapS = THREE.RepeatWrapping;
 				texture.wrapT = THREE.RepeatWrapping;
